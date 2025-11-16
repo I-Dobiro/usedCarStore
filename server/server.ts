@@ -4,6 +4,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
+import productRoutes from './routes/productRoutes';
+
 dotenv.config();
 
 const app = express();
@@ -13,12 +15,10 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Used Car Store API is running!');
-});
+app.use('/api/products', productRoutes);
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
+    console.log(`✅ Server is running at http://localhost:${PORT}`);
 });
