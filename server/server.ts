@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { sql } from './config/db';
 import carRoutes from './routes/carsRoutes';
+import userRoutes from './routes/usersRoutes';
 
 dotenv.config();
 
@@ -16,24 +17,42 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/api/cars', carRoutes);
+app.use('api/users', userRoutes)
 
 const initDB = async () => {
     try {
-        await sql`
+        const usersTable = await sql`
+        CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        email TEXT UNIQUE,
+        password TEXT,
+        role TEXT DEFAULT 'user',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`;
+        const carTable = await sql`
         CREATE TABLE IF NOT EXISTS cars (
-            id SERIAL PRIMARY KEY,
-            seller_id INT,
-            title TEXT,
-            description TEXT,
-            price NUMERIC(10,2),
-            make TEXT,
-            model TEXT,
-            year INT,
-            mileage INT,
-            images TEXT[],
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        `
+        id SERIAL PRIMARY KEY,
+        seller_id INT REFERENCES users(id),
+        title TEXT,
+        description TEXT,
+        price NUMERIC(10,2),
+        make TEXT,
+        model TEXT,
+        year INT,
+        mileage INT,
+        images TEXT[],
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`;
+        const ordersTable = await sql`
+        CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        buyer_id INT REFERENCES users(id),
+        car_id INT REFERENCES cars(id),
+        payment_status TEXT,
+        total NUMERIC(10,2),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`;
         // Initialize your database connection here
         console.log('Database initialized');
     } catch (error) {
