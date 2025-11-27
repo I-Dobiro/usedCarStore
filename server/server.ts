@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { sql } from './config/db';
 import carRoutes from './routes/carsRoutes';
 import userRoutes from './routes/usersRoutes';
+import ordersRoutes from './routes/ordersRoutes';
 
 dotenv.config();
 
@@ -17,7 +18,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/api/cars', carRoutes);
-app.use('api/users', userRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/orders', ordersRoutes);
 
 const initDB = async () => {
     try {
