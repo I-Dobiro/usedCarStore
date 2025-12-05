@@ -7,6 +7,7 @@ import { sql } from './config/db';
 import carRoutes from './routes/carsRoutes';
 import userRoutes from './routes/usersRoutes';
 import ordersRoutes from './routes/ordersRoutes';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/cars', carRoutes);
 app.use('/api/users', userRoutes)
 app.use('/api/orders', ordersRoutes);
+app.use("/api/auth", authRoutes);
 
 const initDB = async () => {
     try {
