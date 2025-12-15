@@ -13,7 +13,7 @@ export const register = async (req: Request, res: Response) => {
       SELECT * FROM users WHERE email = ${email}
     `;
         if (existingUser.length > 0) {
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(409).json({ message: "User already exists" });
         }
 
         // Hash password
@@ -78,4 +78,18 @@ export const login = async (req: Request, res: Response) => {
         console.error("Login Error:", error);
         return res.status(500).json({ message: "Server error" });
     }
+};
+
+export const getCurrentUser = async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await sql`
+      SELECT id, name, email
+      FROM users
+      WHERE id = ${req.userId}
+    `;
+
+    return res.json(result[0]);
+  } catch {
+    return res.status(500).json({ message: "Server error" });
+  }
 };
